@@ -1,11 +1,12 @@
 # app/main.py
 # Entry point for FastAPI application with Sentry integration
 
-import os
 import logging
+import os
+
+import sentry_sdk
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-import sentry_sdk
 from sentry_sdk.integrations.asgi import SentryAsgiMiddleware
 
 # Logging setup
