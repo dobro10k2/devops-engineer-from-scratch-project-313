@@ -9,17 +9,21 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+      # Checkout the repository
       - name: Checkout
         uses: actions/checkout@v4
 
+      # Setup Python 3.12
       - name: Setup Python
         uses: actions/setup-python@v5
         with:
           python-version: "3.12"
 
+      # Install uv
       - name: Install uv
         run: pip install uv
 
+      # Cache uv dependencies
       - name: Cache uv
         uses: actions/cache@v4
         with:
@@ -28,12 +32,19 @@ jobs:
           restore-keys: |
             uv-${{ runner.os }}-
 
+      # Sync project dependencies
       - name: Install dependencies
         run: uv sync
 
+      # Set PYTHONPATH to include project root for imports
+      - name: Set PYTHONPATH
+        run: echo "PYTHONPATH=." >> $GITHUB_ENV
+
+      # Run Ruff linter
       - name: Run Ruff
         run: uv run ruff check .
 
+      # Run tests with pytest
       - name: Run tests
         run: uv run pytest -q
 
