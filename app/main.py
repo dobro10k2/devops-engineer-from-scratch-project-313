@@ -1,32 +1,51 @@
 # app/main.py
-# Entry point for FastAPI application
+# Entry point for FastAPI application with Sentry integration
 
+import os
 import logging
-
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+import sentry_sdk
+from sentry_sdk.integrations.asgi import SentryAsgiMiddleware
 
-# Initialize app
-app = FastAPI(title="DevOps Engineer Project 313")
-
-# Setup logging middleware
+# Logging setup
 logging.basicConfig(level=logging.INFO)
 
-# Setup CORS middleware for development
+# Initialize Sentry
+SENTRY_DSN = os.getenv("SENTRY_DSN")
+if SENTRY_DSN:
+    sentry_sdk.init(
+        dsn=SENTRY_DSN,
+        send_default_pii=True,
+        traces_sample_rate=1.0
+    )
+
+# Initialize FastAPI
+app = FastAPI(title="DevOps Engineer Project 313")
+
+# Sentry middleware
+if SENTRY_DSN:
+    app = SentryAsgiMiddleware(app)
+
+# CORS middleware
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],  # allow all origins
+    allow_origins=["*"],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )
 
-# Health check endpoint
+# Health check
 @app.get("/ping")
 async def ping():
     return "pong"
 
-# Optional main function for direct run
+# Test route to trigger Sentry error
+@app.get("/sentry-debug")
+async def trigger_error():
+    1 / 0  # ZeroDivisionError sent to Sentry
+
 def main():
     print("Hello from devops-engineer-from-scratch-project-313!")
 
