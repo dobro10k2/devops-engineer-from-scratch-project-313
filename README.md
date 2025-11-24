@@ -8,6 +8,10 @@ This project is a simple FastAPI application.
 ## How to run locally
 
 ```bash
-make install
-make run
+make install   # Install dependencies via uv
+make run       # Run FastAPI on port 8080
+make test      # Run tests
+make lint      # Check code with Ruff
+make fmt       # Format code with Ruff
+make clean     # Clean uv/Ruff cache
 
