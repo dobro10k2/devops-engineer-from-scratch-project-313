@@ -1,8 +1,5 @@
 ### Hexlet tests and linter status:
-### CI Status  
-![CI](https://github.com/dobro10k2/devops-engineer-from-scratch-project-313/actions/workflows/ci.yml/badge.svg)
-
-[![Actions Status](https://github.com/dobro10k2/devops-engineer-from-scratch-project-313/actions/workflows/hexlet-check.yml/badge.svg)](https://github.com/dobro10k2/devops-engineer-from-scratch-project-313/actions)
+![CI](https://github.com/dobro10k2/devops-engineer-from-scratch-project-313/actions/workflows/ci.yml/badge.svg)[![Actions Status](https://github.com/dobro10k2/devops-engineer-from-scratch-project-313/actions/workflows/hexlet-check.yml/badge.svg)](https://github.com/dobro10k2/devops-engineer-from-scratch-project-313/actions)
 
 # Deploy applications on PaaS
 
