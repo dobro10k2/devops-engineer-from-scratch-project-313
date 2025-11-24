@@ -1,19 +1,26 @@
-# Makefile
-# Commands to install and run FastAPI app
+.PHONY: install run test lint fmt clean
 
-VENV=venv
-PYTHON=python3
-
-.PHONY: install run clean
-
+# Install dependencies
 install:
-	# Create virtual environment if it does not exist
-	test -d $(VENV) || $(PYTHON) -m venv $(VENV)
-	. $(VENV)/bin/activate && pip install --upgrade pip
-	. $(VENV)/bin/activate && pip install fastapi uv uvicorn
+	uv sync
 
+# Run FastAPI app on port 8080
 run:
-	. $(VENV)/bin/activate && uv run fastapi dev --host 0.0.0.0 --port 8080
+	uv run fastapi dev --host 0.0.0.0 --port 8080
 
+# Run tests with PYTHONPATH to find app package
+test:
+	PYTHONPATH=. uv run pytest -q
+
+# Run linter
+lint:
+	uv run ruff check .
+
+# Format code
+fmt:
+	uv run ruff format .
+
+# Optional: clean uv cache (not venv)
 clean:
-	rm -rf $(VENV)
+	rm -rf .ruff_cache uv.lock
+

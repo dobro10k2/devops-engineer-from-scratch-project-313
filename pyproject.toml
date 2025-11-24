@@ -1,11 +1,15 @@
 [project]
 name = "devops-engineer-from-scratch-project-313"
 version = "0.1.0"
-description = "Add your description here"
+description = "FastAPI project for Hexlet DevOps"
 readme = "README.md"
 requires-python = ">=3.12"
 dependencies = [
     "fastapi>=0.121.2",
     "fastapi-cli>=0.0.16",
     "uvicorn>=0.38.0",
+    "pytest>=7.0.0",
+    "ruff>=0.0.293",
+    "httpx>=0.24.0"
 ]
+

@@ -1,9 +1,10 @@
-# main.py
+# app/main.py
 # Entry point for FastAPI application
+
+import logging
 
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-import logging
 
 # Initialize app
 app = FastAPI(title="DevOps Engineer Project 313")
@@ -31,3 +32,4 @@ def main():
 
 if __name__ == "__main__":
     main()
+
