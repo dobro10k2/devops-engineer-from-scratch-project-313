@@ -2,6 +2,7 @@
 # Tests for /ping endpoint
 
 from fastapi.testclient import TestClient
+
 from app.main import fastapi_app  # Use original FastAPI app for testing
 
 client = TestClient(fastapi_app)

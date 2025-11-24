@@ -2,9 +2,9 @@
 # Entry point for FastAPI application with Sentry integration
 
 import os
+
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-import sentry_sdk
 from sentry_sdk.integrations.asgi import SentryAsgiMiddleware
 
 # Get Sentry DSN from environment
