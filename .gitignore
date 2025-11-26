@@ -1,9 +1,13 @@
 *.egg-info
-__pycache__
+__pycache__/
 dist/
 *.pyc
-.venv
+.venv/
 .coverage
 coverage.xml
 *_cache/
 venv/
+uv.lock
+.ruff_cache
+test.db
+.env
