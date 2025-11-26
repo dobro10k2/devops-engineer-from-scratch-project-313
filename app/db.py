@@ -1,31 +1,19 @@
 # app/db.py
-# Database initialization for SQLModel with support for PostgreSQL and SQLite.
-
 import os
 
-from dotenv import load_dotenv
 from sqlmodel import Session, SQLModel, create_engine
 
-# Load environment variables
-load_dotenv()
+DATABASE_URL = os.getenv("DATABASE_URL")
 
-DATABASE_URL = os.getenv("DATABASE_URL", "sqlite:///./test.db")
+# PostgreSQL engine using psycopg2-binary
+engine = create_engine(DATABASE_URL, echo=True)
 
-# For SQLite we need check_same_thread
-connect_args = {}
-if DATABASE_URL.startswith("sqlite"):
-    connect_args = {"check_same_thread": False}
-
-engine = create_engine(DATABASE_URL, connect_args=connect_args)
-
-
-def init_db() -> None:
-    """Create all tables on startup."""
+def init_db():
+    """Create database tables"""
     SQLModel.metadata.create_all(engine)
 
-
 def get_session():
-    """Provide a database session."""
+    """Provide a session for CRUD operations"""
     with Session(engine) as session:
         yield session
 
