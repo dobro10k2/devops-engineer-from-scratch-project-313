@@ -1,12 +1,12 @@
 # app/main.py
 # Main FastAPI application with CRUD for short links.
-# Fixed for test_sentry_debug to pass by using original fastapi_app for tests.
 
 import os
 
 from dotenv import load_dotenv
-from fastapi import Depends, FastAPI
+from fastapi import Depends, FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import RedirectResponse
 from sentry_sdk.integrations.asgi import SentryAsgiMiddleware
 from sqlmodel import Session
 
@@ -18,6 +18,7 @@ from .crud import (
     update_link,
 )
 from .db import get_session, init_db
+from .models import Link  # Подключаем модель Link
 from .schemas import LinkCreate, LinkRead, LinkUpdate
 
 # Load environment variables
@@ -70,6 +71,14 @@ def update_link_route(link_id: int, data: LinkUpdate, session: Session = Depends
 def delete_link_route(link_id: int, session: Session = Depends(get_session)):
     delete_link(session, link_id)
     return None
+
+# Redirect endpoint
+@fastapi_app.get("/r/{short_name}")
+def redirect_link(short_name: str, session: Session = Depends(get_session)):
+    link = session.query(Link).filter(Link.short_name == short_name).first()
+    if not link:
+        raise HTTPException(status_code=404, detail="Not Found")
+    return RedirectResponse(url=link.original_url)
 
 # Test route to trigger Sentry error
 @fastapi_app.get("/sentry-debug")
