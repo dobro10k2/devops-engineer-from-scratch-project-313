@@ -2,7 +2,7 @@
 # CRUD operations for the Link model.
 
 from fastapi import HTTPException
-from sqlmodel import Session, select
+from sqlmodel import Session, func, select
 
 from .models import Link
 from .schemas import LinkCreate, LinkUpdate
@@ -15,6 +15,13 @@ def create_short_url(base_url: str, short_name: str) -> str:
 
 def get_all_links(session: Session):
     return session.exec(select(Link)).all()
+
+
+def get_links_paginated(session: Session, offset: int, limit: int):
+    """Return links slice with total count."""
+    total = session.exec(select(func.count(Link.id))).one()
+    links = session.exec(select(Link).offset(offset).limit(limit)).all()
+    return links, total
 
 
 def get_link(session: Session, link_id: int) -> Link:
