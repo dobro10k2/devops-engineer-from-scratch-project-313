@@ -1,8 +1,9 @@
 :80
 
-# ------------------------------
+# ===============================
 # FRONTEND (Vite dev server)
-# ------------------------------
+# ===============================
+
 @frontend {
     not path /api/*
     not path /r/*
@@ -12,47 +13,81 @@
 
 handle @frontend {
     reverse_proxy 127.0.0.1:5173 {
-        # ключевой фикс — подменяем Host, чтобы Vite НЕ блокировал
+        # FIX Vite "host not allowed"
         header_up Host 127.0.0.1
-
         header_up X-Real-IP {http.request.remote}
         header_up X-Forwarded-For {http.request.remote}
         header_up X-Forwarded-Proto {http.request.scheme}
-        header_up X-Forwarded-Host {http.request.host}
     }
 }
 
-# ------------------------------
-# API
-# ------------------------------
+# ===============================
+# HTML RESPONSE MODIFICATION
+# Inject JS that rewrites localhost:8080 to /api
+# ===============================
+
+@html {
+    path_regexp html \.html$
+}
+
+handle_response @html {
+    body {
+        find "</head>"
+        replace "</head><script>
+            (function(){
+                // Rewrite fetch URLs
+                const origFetch = window.fetch;
+                window.fetch = function(url, options) {
+                    if (typeof url === 'string' && url.includes('http://localhost:8080')) {
+                        url = url.replace('http://localhost:8080/api', '/api');
+                    }
+                    return origFetch.call(this, url, options);
+                };
+
+                // Rewrite XHR URLs
+                const origOpen = XMLHttpRequest.prototype.open;
+                XMLHttpRequest.prototype.open = function(method, url, ...rest) {
+                    if (typeof url === 'string' && url.includes('http://localhost:8080')) {
+                        url = url.replace('http://localhost:8080/api', '/api');
+                    }
+                    return origOpen.call(this, method, url, ...rest);
+                };
+            })();
+        </script>"
+    }
+}
+
+# ===============================
+# API → FastAPI
+# ===============================
 handle_path /api/* {
     reverse_proxy 127.0.0.1:8080
 }
 
-# ------------------------------
+# ===============================
 # SHORT LINKS (/r/<short>)
-# ------------------------------
+# ===============================
 handle_path /r/* {
     reverse_proxy 127.0.0.1:8080
 }
 
-# ------------------------------
+# ===============================
 # PING
-# ------------------------------
+# ===============================
 handle_path /ping {
     reverse_proxy 127.0.0.1:8080/ping
 }
 
-# ------------------------------
+# ===============================
 # HEALTH
-# ------------------------------
+# ===============================
 handle_path /health {
     reverse_proxy 127.0.0.1:8080/health
 }
 
-# ------------------------------
+# ===============================
 # FALLBACK (если ничего не подошло)
-# ------------------------------
+# ===============================
 handle {
     reverse_proxy 127.0.0.1:5173 {
         header_up Host 127.0.0.1
