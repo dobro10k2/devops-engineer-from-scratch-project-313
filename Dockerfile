@@ -10,8 +10,8 @@ RUN pip install --no-cache-dir uv
 # Copy project files
 COPY . .
 
-# Sync Python dependencies
-RUN uv sync --frozen
+# Sync Python dependencies (no --frozen because uv.lock is ignored/not present)
+RUN uv sync
 
 # Install Node.js (required to build frontend)
 RUN apt-get update && apt-get install -y curl && \
@@ -19,7 +19,7 @@ RUN apt-get update && apt-get install -y curl && \
     apt-get install -y nodejs && \
     rm -rf /var/lib/apt/lists/*
 
-# Install frontend
+# Install frontend dependencies
 RUN npm install --prefix frontend
 
 # Build frontend
