@@ -30,10 +30,11 @@ fastapi_app = FastAPI(title="DevOps Engineer Project 313")
 
 fastapi_app.add_middleware(
     CORSMiddleware,
-    allow_origins=[FRONTEND_URL],
+    allow_origins=["*"],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
+    expose_headers=["Content-Range"],
 )
 
 
