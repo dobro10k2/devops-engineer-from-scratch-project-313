@@ -5,7 +5,7 @@ echo "Starting FastAPI application..."
 make run-render &
 
 # Wait a bit for FastAPI to start
-while ! curl -s http://127.0.0.1:8080/health >/dev/null; do
+while ! curl -s http://127.0.0.1:8081/health >/dev/null; do
   sleep 1
 done
 
