@@ -12,7 +12,6 @@ echo "FastAPI is UP"
 
 echo "Starting frontend (Vite)..."
 VITE_API_URL=/api \
-VITE_ALLOWED_HOSTS=dobro10k2.onrender.com,localhost,0.0.0.0 \
   npx start-hexlet-devops-deploy-crud-frontend --host 0.0.0.0 &
 
 # Wait for frontend
