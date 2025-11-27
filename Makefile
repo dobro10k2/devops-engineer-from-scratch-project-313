@@ -13,7 +13,7 @@ run:
 dev:
 	npx concurrently \
 	    "uv run --env-file .env fastapi dev --host 0.0.0.0 --port 8080" \
-	    "npm run dev --prefix frontend"
+	    "npx @hexlet/project-devops-deploy-crud-frontend"
 
 # Run tests
 test:
