@@ -1,12 +1,13 @@
 {
-  "name": "url-shortener-frontend",
+  "name": "frontend",
+  "version": "1.0.0",
   "private": true,
   "scripts": {
     "dev": "start-hexlet-devops-deploy-crud-frontend",
-    "build": "start-hexlet-devops-deploy-crud-frontend build"
+    "build": "vite build"
   },
   "dependencies": {
-    "@hexlet/project-devops-deploy-crud-frontend": "^1.0.0"
+    "@hexlet/project-devops-deploy-crud-frontend": "^1.0.3"
   }
 }
 

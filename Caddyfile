@@ -1,21 +1,29 @@
-# Caddyfile
-
-:80
-
-# Serve static frontend
-root * /app/frontend/dist
-file_server
-
-# Proxy API routes
-handle_path /api/* {
-    reverse_proxy 127.0.0.1:8080
+{
+    auto_https off
 }
 
-handle_path /ping {
-    reverse_proxy 127.0.0.1:8080
-}
+:8080 {
 
-handle_path /r/* {
-    reverse_proxy 127.0.0.1:8080
+    # Serve built frontend
+    root * /app/frontend/dist
+    file_server
+
+    # API reverse proxy
+    handle_path /api/* {
+        reverse_proxy localhost:8080
+    }
+
+    # Redirect handler
+    handle_path /r/* {
+        reverse_proxy localhost:8080
+    }
+
+    # Sentry debug passthrough
+    handle_path /sentry-debug {
+        reverse_proxy localhost:8080
+    }
+
+    # Fallback for SPA routing
+    try_files {path} /index.html
 }
 
