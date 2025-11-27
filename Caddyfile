@@ -1,0 +1,38 @@
+:80
+
+# FRONTEND (Vite dev server)
+@frontend {
+    not path /api/* 
+    not path /r/* 
+    not path /health 
+    not path /ping
+}
+handle @frontend {
+    reverse_proxy 127.0.0.1:5173
+}
+
+# API
+handle_path /api/* {
+    reverse_proxy 127.0.0.1:8080
+}
+
+# Redirects /r/<short>
+handle_path /r/* {
+    reverse_proxy 127.0.0.1:8080
+}
+
+# /ping
+handle_path /ping {
+    reverse_proxy 127.0.0.1:8080
+}
+
+# /health
+handle_path /health {
+    reverse_proxy 127.0.0.1:8080
+}
+
+# Fallback
+handle {
+    reverse_proxy 127.0.0.1:5173
+}
+

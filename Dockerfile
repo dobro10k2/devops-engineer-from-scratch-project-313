@@ -6,9 +6,12 @@ WORKDIR /app
 
 # Install necessary packages and utilities
 RUN apt-get update \
-    && apt-get install -y --no-install-recommends curl make nginx \
+    && apt-get install -y --no-install-recommends curl make npm \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
+
+# Install Caddy
+RUN curl -sSfL https://caddyserver.com/api/download\?os=linux\&arch=amd64 | tar -xz -C /usr/bin caddy
 
 # Install Node.js (if required for other operations)
 RUN curl -fsSL https://deb.nodesource.com/setup_24.x | bash - \
@@ -33,8 +36,8 @@ RUN uv sync
 # Copy the rest of the project files
 COPY . /app/
 
-# Move Nginx configuration to the correct directory
-RUN mv nginx.conf /etc/nginx/nginx.conf
+# Move Caddyfile
+RUN mkdir -p /etc/caddy && cp Caddyfile /etc/caddy/Caddyfile
 
 # Make the entrypoint.sh script executable
 RUN chmod +x scripts/entrypoint.sh
