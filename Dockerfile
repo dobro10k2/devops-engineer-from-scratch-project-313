@@ -15,6 +15,9 @@ RUN curl -fsSL https://deb.nodesource.com/setup_24.x | bash - \
     && apt-get install -y --no-install-recommends nodejs \
     && rm -rf /var/lib/apt/lists/*
 
+# Install @hexlet/project-url-shortener-frontend
+RUN npm install @hexlet/project-devops-deploy-crud-frontend
+
 # Install uv for FastAPI
 RUN curl -LsSf https://astral.sh/uv/install.sh | sh
 
