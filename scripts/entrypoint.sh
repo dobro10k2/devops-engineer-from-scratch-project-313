@@ -1,26 +1,28 @@
 #!/bin/sh
+set -e
 
-# Start FastAPI application in the background
-echo "Starting FastAPI application..."
+echo "Starting FastAPI backend..."
 make run-render &
 
-# Wait a bit for FastAPI to start
-while ! curl -s http://127.0.0.1:8081/health >/dev/null; do
+# Wait for FastAPI
+echo "Waiting for FastAPI..."
+until curl -s http://127.0.0.1:8080/health >/dev/null; do
   sleep 1
 done
 
-# Start the frontend (Hexlet URL shortener) in the background
+echo "FastAPI is UP"
+
 echo "Starting frontend..."
-npx start-hexlet-devops-deploy-crud-frontend &
+VITE_API_URL=/api \
+  npx start-hexlet-devops-deploy-crud-frontend &
 
-# Wait a bit for frontend to start
-while ! curl -s http://127.0.0.1:5173/health >/dev/null; do
+# Wait for frontend
+until curl -s http://127.0.0.1:5173 >/dev/null; do
   sleep 1
 done
 
-echo "Frontend finished loading..."
+echo "Frontend is UP"
 
-# Start Nginx
 echo "Starting Nginx..."
 nginx -g "daemon off;"
 
