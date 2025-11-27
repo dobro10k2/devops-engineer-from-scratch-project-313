@@ -34,13 +34,13 @@ RUN uv sync
 COPY . /app/
 
 # Move Nginx configuration to the correct directory
-#RUN mv nginx.conf /etc/nginx/nginx.conf
+RUN mv nginx.conf /etc/nginx/nginx.conf
 
 # Make the entrypoint.sh script executable
-#RUN chmod +x scripts/entrypoint.sh
+RUN chmod +x scripts/entrypoint.sh
 
 # Expose port 80 for Nginx
 EXPOSE 80
 
 # Run Deploy
-CMD ["sh", "-c", "uv run fastapi run --host 0.0.0.0 --port 8080 & npx start-hexlet-devops-deploy-crud-frontend & nginx -g 'daemon off;'"]
+CMD ["scripts/entrypoint.sh"]
