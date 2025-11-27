@@ -4,19 +4,24 @@ FROM python:3.12-slim
 
 WORKDIR /app
 
-# Install necessary packages and utilities
+# Install system dependencies
 RUN apt-get update \
-    && apt-get install -y --no-install-recommends curl make npm \
+    && apt-get install -y --no-install-recommends curl make npm debian-keyring debian-archive-keyring apt-transport-https gnupg \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
-
-# Install Caddy
-RUN curl -sSfL https://caddyserver.com/api/download\?os=linux\&arch=amd64 | tar -xz -C /usr/bin caddy
 
 # Install Node.js (if required for other operations)
 RUN curl -fsSL https://deb.nodesource.com/setup_24.x | bash - \
     && apt-get install -y --no-install-recommends nodejs \
     && rm -rf /var/lib/apt/lists/*
+
+# Install Caddy (official instructions)
+RUN curl -1sLf 'https://dl.cloudsmith.io/public/caddy/stable/gpg.key' \
+    | gpg --dearmor -o /usr/share/keyrings/caddy-stable-archive-keyring.gpg \
+    && curl -1sLf 'https://dl.cloudsmith.io/public/caddy/stable/debian.deb.txt' \
+    | tee /etc/apt/sources.list.d/caddy-stable.list \
+    && apt-get update \
+    && apt-get install -y caddy
 
 # Install @hexlet/project-url-shortener-frontend
 RUN npm install @hexlet/project-devops-deploy-crud-frontend
