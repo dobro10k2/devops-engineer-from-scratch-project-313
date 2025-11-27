@@ -3,10 +3,12 @@
   "private": true,
   "scripts": {
     "dev": "npx @hexlet/project-devops-deploy-crud-frontend",
-    "build": "npx @hexlet/project-devops-deploy-crud-frontend build"
+    "build": "vite build"
   },
   "dependencies": {
     "@hexlet/project-devops-deploy-crud-frontend": "^1.0.3",
-    "concurrently": "^8.2.0"
+    "concurrently": "^8.2.0",
+    "vite": "^5.0.0"
   }
 }
+
