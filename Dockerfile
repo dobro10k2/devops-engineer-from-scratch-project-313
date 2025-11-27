@@ -22,23 +22,23 @@ RUN curl -LsSf https://astral.sh/uv/install.sh | sh
 ENV PATH="/root/.local/bin:${PATH}"
 
 # Copy the necessary files for installing dependencies
-COPY pyproject.toml uv.lock Makefile README.md /app/
+COPY pyproject.toml Makefile README.md /app/
 
-# Install Python dependencies
-RUN make install
+# Install Python dependencies and generate uv.lock during the build
+RUN uv sync
 
-# Copy the project files
+# Copy the rest of the project files
 COPY . /app/
 
 # Move Nginx configuration to the correct directory
 RUN mv nginx.conf /etc/nginx/nginx.conf
 
-# Make the start.sh script executable
+# Make the entrypoint.sh script executable
 RUN chmod +x scripts/entrypoint.sh
 
 # Expose port 80 for Nginx
 EXPOSE 80
 
-# Run the start.sh script
+# Run the entrypoint.sh script
 CMD ["scripts/entrypoint.sh"]
 
