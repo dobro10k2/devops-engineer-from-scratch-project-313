@@ -10,7 +10,7 @@ test.db
 dev.db
 
 # uv
-uv.lock
+# uv.lock
 .ruff_cache
 
 # Environment files
