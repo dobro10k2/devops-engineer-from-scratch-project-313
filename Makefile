@@ -11,7 +11,7 @@ run:
 
 # Run backend on render
 run-render:
-	uv run fastapi dev --host 0.0.0.0 --port 8080
+	uv run fastapi dev --host 0.0.0.0 --port 8081
 
 
 # Run backend and frontend together
