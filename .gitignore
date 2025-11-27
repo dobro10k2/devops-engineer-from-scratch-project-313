@@ -10,7 +10,7 @@ test.db
 dev.db
 
 # uv
-# uv.lock
+uv.lock
 .ruff_cache
 
 # Environment files
@@ -21,8 +21,5 @@ dev.db
 coverage.xml
 
 # Frontend
-frontend/node_modules/
-frontend/dist/
-frontend/.vite/
-frontend/.cache/
+frontend/
 

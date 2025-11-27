@@ -1,40 +1,44 @@
 # Dockerfile
 
-# Stage 1: Backend (FastAPI) setup
-FROM python:3.12-slim AS backend
+FROM python:3.12-slim
 
 WORKDIR /app
 
-# Install uv and other dependencies
-RUN pip install --no-cache-dir uv
+# Install necessary packages and utilities
+RUN apt-get update \
+    && apt-get install -y --no-install-recommends curl make nginx \
+    && apt-get clean \
+    && rm -rf /var/lib/apt/lists/*
 
-# Install Node.js (required for frontend build)
-RUN apt-get update && apt-get install -y curl && \
-    curl -fsSL https://deb.nodesource.com/setup_20.x | bash - && \
-    apt-get install -y nodejs && \
-    rm -rf /var/lib/apt/lists/*
+# Install Node.js (if required for other operations)
+RUN curl -fsSL https://deb.nodesource.com/setup_24.x | bash - \
+    && apt-get install -y --no-install-recommends nodejs \
+    && rm -rf /var/lib/apt/lists/*
 
-# Install Nginx
-RUN apt-get update && apt-get install -y nginx && \
-    rm -rf /var/lib/apt/lists/*
+# Install uv for FastAPI
+RUN curl -LsSf https://astral.sh/uv/install.sh | sh
 
-# Copy project files
-COPY . .
+# Set the path for uv
+ENV PATH="/root/.local/bin:${PATH}"
 
-# Sync Python dependencies
-RUN uv sync --frozen
+# Copy the necessary files for installing dependencies
+COPY pyproject.toml uv.lock Makefile README.md /app/
 
-# Install frontend dependencies and build
-RUN npm install --prefix frontend
-RUN npm run build --prefix frontend
+# Install Python dependencies
+RUN make install
 
-# Copy Nginx configuration file
-COPY nginx.conf /etc/nginx/nginx.conf
+# Copy the project files
+COPY . /app/
 
-# Expose necessary ports
-ENV PORT=80
+# Move Nginx configuration to the correct directory
+RUN mv nginx.conf /etc/nginx/nginx.conf
+
+# Make the start.sh script executable
+RUN chmod +x /scripts/start.sh
+
+# Expose port 80 for Nginx
 EXPOSE 80
 
-# Command to start FastAPI app and Nginx
-CMD ["sh", "-c", "uv run fastapi dev --host 0.0.0.0 --port 8080 & nginx -g 'daemon off;'"]
+# Run the start.sh script
+CMD ["/scripts/start.sh"]
 
