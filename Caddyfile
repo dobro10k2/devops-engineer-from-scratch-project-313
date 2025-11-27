@@ -1,0 +1,21 @@
+# Caddyfile
+
+:80
+
+# Serve static frontend
+root * /app/frontend/dist
+file_server
+
+# Proxy API routes
+handle_path /api/* {
+    reverse_proxy 127.0.0.1:8080
+}
+
+handle_path /ping {
+    reverse_proxy 127.0.0.1:8080
+}
+
+handle_path /r/* {
+    reverse_proxy 127.0.0.1:8080
+}
+

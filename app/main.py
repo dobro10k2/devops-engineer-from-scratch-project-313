@@ -1,6 +1,4 @@
 # app/main.py
-# Main FastAPI application with CRUD for short links.
-
 import json
 import os
 
@@ -22,17 +20,17 @@ from .db import get_session, init_db
 from .models import Link
 from .schemas import LinkCreate, LinkRead, LinkUpdate
 
-# Load environment variables
 load_dotenv()
 
 BASE_URL = os.getenv("BASE_URL", "http://localhost:8080")
 SENTRY_DSN = os.getenv("SENTRY_DSN")
+FRONTEND_URL = os.getenv("FRONTEND_URL", "http://localhost:5173")
 
 fastapi_app = FastAPI(title="DevOps Engineer Project 313")
 
 fastapi_app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],
+    allow_origins=[FRONTEND_URL],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -41,7 +39,6 @@ fastapi_app.add_middleware(
 
 @fastapi_app.on_event("startup")
 def on_startup():
-    """Initialize the database on startup."""
     init_db()
 
 
@@ -50,17 +47,12 @@ async def ping():
     return "pong"
 
 
-# CRUD endpoints with pagination
 @fastapi_app.get("/api/links", response_model=list[LinkRead])
 def list_links(
     response: Response,
     range: str = Query("[0,9]"),
     session: Session = Depends(get_session)
 ):
-    """
-    List links with pagination using range query parameter [start,end].
-    Returns Content-Range header.
-    """
     try:
         start, end = json.loads(range)
     except Exception:

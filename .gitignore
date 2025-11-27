@@ -1,13 +1,27 @@
+# Python
 *.egg-info
 __pycache__/
-dist/
 *.pyc
-.venv/
-.coverage
-coverage.xml
-*_cache/
 venv/
+.venv/
+*_cache/
+dist/
+test.db
+
+# uv
 uv.lock
 .ruff_cache
-test.db
+
+# Environment files
 .env
+
+# Coverage
+.coverage
+coverage.xml
+
+# Frontend
+frontend/node_modules/
+frontend/dist/
+frontend/.vite/
+frontend/.cache/
+
