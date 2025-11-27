@@ -34,11 +34,11 @@ COPY . /app/
 RUN mv nginx.conf /etc/nginx/nginx.conf
 
 # Make the start.sh script executable
-RUN chmod +x scripts/start.sh
+RUN chmod +x scripts/entrypoint.sh
 
 # Expose port 80 for Nginx
 EXPOSE 80
 
 # Run the start.sh script
-CMD ["scripts/start.sh"]
+CMD ["scripts/entrypoint.sh"]
 
