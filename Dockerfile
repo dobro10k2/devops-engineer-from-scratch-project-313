@@ -1,31 +1,32 @@
-###############################################
-# STAGE 1 — Builder
-###############################################
-FROM python:3.12-slim AS builder
+FROM python:3.12-slim AS base
 
 WORKDIR /app
 
-# Install system dependencies
+# ---------------------------------------
+# 1. Install system deps (ONE apt update)
+# ---------------------------------------
 RUN apt-get update \
     && apt-get install -y --no-install-recommends \
         curl \
         make \
-        npm \
         gnupg \
+        npm \
         debian-keyring \
         debian-archive-keyring \
         apt-transport-https \
     && rm -rf /var/lib/apt/lists/*
 
-# Install Node.js (Debian)
+# ---------------------------------------
+# 2. Install Node.js from Debian repo
+# (faster than NodeSource script)
+# ---------------------------------------
 RUN apt-get update \
     && apt-get install -y --no-install-recommends nodejs \
     && rm -rf /var/lib/apt/lists/*
 
-
-# ==============================================
-# OFFICIAL CADDY INSTALL (CLOUDSMITH)
-# ==============================================
+# ---------------------------------------
+# 3. Install Caddy
+# ---------------------------------------
 RUN curl -1sLf 'https://dl.cloudsmith.io/public/caddy/stable/gpg.key' \
         | gpg --dearmor -o /usr/share/keyrings/caddy-stable-archive-keyring.gpg \
     && curl -1sLf 'https://dl.cloudsmith.io/public/caddy/stable/debian.deb.txt' \
@@ -35,55 +36,36 @@ RUN curl -1sLf 'https://dl.cloudsmith.io/public/caddy/stable/gpg.key' \
     && apt-get update \
     && apt-get install -y caddy \
     && rm -rf /var/lib/apt/lists/*
-# ==============================================
 
-
-# Install uv
+# ---------------------------------------
+# 4. Install uv
+# ---------------------------------------
 RUN curl -LsSf https://astral.sh/uv/install.sh | sh
-ENV PATH="/root/.local/bin:$PATH"
+ENV PATH="/root/.local/bin:${PATH}"
 
-# Copy dependency files
-COPY pyproject.toml Makefile README.md ./
+# ---------------------------------------
+# 5. Copy minimal files to install deps
+# ---------------------------------------
+COPY pyproject.toml Makefile README.md /app/
 
-# Install Python deps
+# ---------------------------------------
+# 6. Install Python deps (cached)
+# ---------------------------------------
 RUN uv sync
 
-# Install frontend deps
+# ---------------------------------------
+# 7. Install frontend package (cached)
+# ---------------------------------------
 RUN npm install @hexlet/project-devops-deploy-crud-frontend
 
-
-
-###############################################
-# STAGE 2 — Runtime
-###############################################
-FROM python:3.12-slim AS runtime
-
-WORKDIR /app
-
-# Runtime deps
-RUN apt-get update \
-    && apt-get install -y --no-install-recommends \
-        curl \
-        ca-certificates \
-    && rm -rf /var/lib/apt/lists/*
-
-COPY --from=builder /root/.local /root/.local
-ENV PATH="/root/.local/bin:$PATH"
-
-COPY --from=builder /app/.venv /app/.venv
-ENV VIRTUAL_ENV=/app/.venv
-ENV PATH="/app/.venv/bin:$PATH"
-
-# Copy Caddy binary from builder
-COPY --from=builder /usr/bin/caddy /usr/bin/caddy
-
-# Copy frontend dependencies
-COPY --from=builder /app/node_modules /app/node_modules
-
-# Copy app source
+# ---------------------------------------
+# 8. Copy the whole application
+# ---------------------------------------
 COPY . /app/
 
-# Place Caddyfile and entrypoint
+# ---------------------------------------
+# 9. Caddy config + permissions
+# ---------------------------------------
 RUN mkdir -p /etc/caddy \
     && cp Caddyfile /etc/caddy/Caddyfile \
     && chmod +x scripts/entrypoint.sh
