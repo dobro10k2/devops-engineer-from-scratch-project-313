@@ -4,47 +4,35 @@
 
 :80
 
-# FRONTEND
-@frontend {
-    not path /api/*
-    not path /r/*
-    not path /health
-    not path /ping
-}
-handle @frontend {
-    reverse_proxy 127.0.0.1:5173 {
-        header_up Host 127.0.0.1
-    }
-}
-
-# API
-handle_path /api/* {
-    reverse_proxy 127.0.0.1:8080
-}
-
-# SHORT LINKS
-handle_path /r/* {
-    reverse_proxy 127.0.0.1:8080
-}
-
-# PING  (FIXED!)
-handle /ping {
-    reverse_proxy 127.0.0.1:8080 {
-        uri /ping
-    }
-}
-
-# HEALTH (FIXED!)
+# Статические health/ping проверки
 handle /health {
+    respond 200
+}
+
+handle /ping {
+    respond "pong" 200
+}
+
+# Бэкенд API
+handle /api/* {
     reverse_proxy 127.0.0.1:8080 {
-        uri /health
+        # Полезные заголовки для бэкенда
+        header_up X-Real-IP {remote}
+        header_up X-Forwarded-For {remote}
+        header_up X-Forwarded-Proto {scheme}
     }
 }
 
-# FALLBACK SPA
+# Короткие ссылки
+handle /r/* {
+    reverse_proxy 127.0.0.1:8080
+}
+
+# Фронтенд (SPA)
 handle {
     reverse_proxy 127.0.0.1:5173 {
-        header_up Host 127.0.0.1
+        # Для SPA приложения
+        header_up Host {host}
+        header_up X-Real-IP {remote}
     }
 }
-
