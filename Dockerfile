@@ -28,7 +28,7 @@ COPY --from=frontend /frontend/node_modules/@hexlet/project-devops-deploy-crud-f
 COPY . .
 
 # Настройки
-RUN cp Caddyfile /etc/caddy/Caddyfile
+RUN mkdir -p /etc/caddy && cp Caddyfile /etc/caddy/Caddyfile
 RUN chmod +x scripts/entrypoint.sh
 
 EXPOSE 80
