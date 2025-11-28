@@ -24,7 +24,7 @@ RUN curl -1sLf 'https://dl.cloudsmith.io/public/caddy/stable/gpg.key' \
     && apt-get install -y caddy
 
 # Install @hexlet/project-url-shortener-frontend
-RUN npm install @hexlet/project-devops-deploy-crud-frontend
+#RUN npm install @hexlet/project-devops-deploy-crud-frontend
 
 # Install uv for FastAPI
 RUN curl -LsSf https://astral.sh/uv/install.sh | sh
