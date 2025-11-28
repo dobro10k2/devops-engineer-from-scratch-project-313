@@ -1,13 +1,11 @@
 # Фронтенд стадия
 FROM node:20-alpine as frontend
-WORKDIR /frontend
+WORKDIR /app
 RUN npm install @hexlet/project-devops-deploy-crud-frontend
 # RUN npm run build если требуется
 
 # Бэкенд стадия
 FROM python:3.12-alpine
-
-WORKDIR /app
 
 # Устанавливаем только необходимые пакеты
 RUN apk add --no-cache curl
@@ -21,17 +19,13 @@ RUN pip install uv
 COPY pyproject.toml Makefile README.md ./
 RUN uv sync
 
-# Копируем фронтенд
-COPY --from=frontend /frontend/node_modules/@hexlet/project-devops-deploy-crud-frontend ./frontend
-
 # Копируем исходный код
-COPY . .
+COPY . /app/
 
 # Настройки
 RUN mkdir -p /etc/caddy && cp Caddyfile /etc/caddy/Caddyfile
-#RUN chmod +x scripts/entrypoint.sh
+RUN chmod +x scripts/entrypoint.sh
 
 EXPOSE 80
 
-# CMD ["/app/scripts/entrypoint.sh"]
-CMD sh -c "echo 'Starting FastAPI backend...' && make run-render & cd frontend && VITE_API_URL=/api npx vite --host 0.0.0.0 --port 5173 & cd /app && sleep 15 && caddy run --config /etc/caddy/Caddyfile --adapter caddyfile"
+CMD ["scripts/entrypoint.sh"]

@@ -9,9 +9,7 @@ make run-render &
 
 # Запускаем фронтенд в фоне  
 echo "Starting frontend..."
-cd frontend
 VITE_API_URL=/api npx vite --host 0.0.0.0 --port 5173 &
-cd ..
 
 # Короткие ожидания (Render может иметь свои health checks)
 echo "Waiting for services to start..."
