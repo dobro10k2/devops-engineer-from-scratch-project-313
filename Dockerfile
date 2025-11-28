@@ -7,6 +7,8 @@ RUN npm install @hexlet/project-devops-deploy-crud-frontend
 # Бэкенд стадия
 FROM python:3.12-alpine
 
+WORKDIR /app
+
 # Устанавливаем только необходимые пакеты
 RUN apk add --no-cache curl
 
