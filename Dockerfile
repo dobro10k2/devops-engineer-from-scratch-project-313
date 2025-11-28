@@ -27,8 +27,8 @@ COPY . /app/
 # Настройки
 RUN mkdir -p /etc/caddy && cp Caddyfile /etc/caddy/Caddyfile
 RUN chmod +x scripts/entrypoint.sh
-RUN chmod ls -la
-RUN chmod ls -la scripts/
+RUN ls -la
+RUN ls -la scripts/
 
 EXPOSE 80
 
