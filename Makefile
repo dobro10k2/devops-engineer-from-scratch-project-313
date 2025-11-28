@@ -1,17 +1,10 @@
-.PHONY: install dev run run-render test lint fmt fix clean
+.PHONY: install dev run test lint fmt fix clean
 
 install:
 	uv sync
 
 run:
 	uv run --env-file .env fastapi dev --host 0.0.0.0 --port 8080
-
-run-render:
-	uv run uvicorn app.main:app \
-		--host 0.0.0.0 \
-		--port 8080 \
-		--proxy-headers \
-		--forwarded-allow-ips="*"
 
 dev:
 	npx concurrently \
