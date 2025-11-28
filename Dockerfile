@@ -29,8 +29,22 @@ COPY . .
 
 # Настройки
 RUN mkdir -p /etc/caddy && cp Caddyfile /etc/caddy/Caddyfile
-RUN chmod +x scripts/entrypoint.sh
+#RUN chmod +x scripts/entrypoint.sh
 
 EXPOSE 80
 
-CMD ["/app/scripts/entrypoint.sh"]
+#CMD ["/app/scripts/entrypoint.sh"]
+CMD sh -c "
+  echo 'Starting FastAPI backend...' &&
+  make run-render &
+  
+  echo 'Starting frontend...' &&
+  cd /app/frontend &&
+  VITE_API_URL=/api npx vite --host 0.0.0.0 --port 5173 &
+  
+  echo 'Waiting for services to start...' &&
+  sleep 15 &&
+  
+  echo 'Starting Caddy...' &&
+  caddy run --config /etc/caddy/Caddyfile --adapter caddyfile
+"
