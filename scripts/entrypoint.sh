@@ -36,11 +36,7 @@ export default defineConfig({
 EOF
 
 echo "=== Starting backend ==="
-uv run uvicorn app.main:app \
-    --host 0.0.0.0 \
-    --port 8080 \
-    --proxy-headers \
-    --forwarded-allow-ips="*" &
+uv run --env-file .env fastapi dev --host 0.0.0.0 --port 8080 &
 
 until curl -s http://127.0.0.1:8080/health >/dev/null; do
   sleep 1
