@@ -10,7 +10,7 @@ FROM python:3.12-alpine
 WORKDIR /app
 
 # Устанавливаем только необходимые пакеты
-RUN apk add --no-cache curl
+RUN apk add --no-cache curl make nodejs npm
 
 # Устанавливаем Caddy
 RUN curl -L -o /usr/bin/caddy "https://github.com/caddyserver/caddy/releases/latest/download/caddy_linux_amd64" \
