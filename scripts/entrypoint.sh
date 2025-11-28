@@ -1,6 +1,9 @@
 #!/bin/sh
 set -e
 
+echo "Edit frontend vite.config.ts config file..."
+sed -i '/preview: {/a\    allowedHosts: true,' node_modules/@hexlet/project-devops-deploy-crud-frontend/vite.config.ts &
+
 echo "Starting FastAPI backend..."
 make run-render &
 
@@ -11,7 +14,8 @@ done
 echo "FastAPI is UP"
 
 echo "Starting frontend (Vite)..."
-npx @hexlet/project-devops-deploy-crud-frontend &
+API_URL=/api \
+npx start-hexlet-project-devops-deploy-crud-frontend --host 0.0.0.0 &
 
 # Wait for frontend
 until curl -s http://127.0.0.1:5173 >/dev/null; do
