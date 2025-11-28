@@ -5,28 +5,34 @@ set -e
 echo "Edit frontend vite.config.ts config file..."
 sed -i '/preview: {/a\    allowedHosts: true,' node_modules/@hexlet/project-devops-deploy-crud-frontend/vite.config.ts &
 cat > node_modules/@hexlet/project-devops-deploy-crud-frontend/vite.config.ts << 'EOF'
-import { defineConfig } from 'vite'
+import react from "@vitejs/plugin-react-swc";
+import { defineConfig } from "vite";
+
+const API_URL = process.env.API_URL || 'https://dobro10k2.onrender.com';
 
 export default defineConfig({
-  base: '/',
-  server: {
-    host: '0.0.0.0',
+  plugins: [react()],
+
+  preview: {
+    allowedHosts: true,
     port: 5173,
-    allowedHosts: [
-      'dobro10k2.onrender.com',
-      'localhost',
-      '127.0.0.1'
-    ],
+    host: "0.0.0.0",
+  },
+
+  server: {
+    allowedHosts: ["dobro10k2.onrender.com"],   // <-- ОБЯЗАТЕЛЬНО!
+    port: 5173,
+    host: "0.0.0.0",
     proxy: {
-      '/api': {
-        target: 'http://127.0.0.1:8080',
+      "/api": {
+        target: API_URL,
         changeOrigin: true,
         secure: false,
-        rewrite: (path) => path.replace(/^\/api/, '')
-      }
-    }
-  }
-})
+      },
+    },
+  },
+});
+
 EOF
 
 cat node_modules/@hexlet/project-devops-deploy-crud-frontend/vite.config.ts
