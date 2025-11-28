@@ -33,4 +33,4 @@ RUN chmod +x scripts/entrypoint.sh
 
 EXPOSE 80
 
-CMD ["scripts/entrypoint.sh"]
+CMD ["/app/scripts/entrypoint.sh"]
