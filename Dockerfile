@@ -22,10 +22,21 @@ RUN apt-get update \
     && apt-get install -y --no-install-recommends nodejs \
     && rm -rf /var/lib/apt/lists/*
 
-# Install Caddy from official .deb
-RUN curl -LO "https://github.com/caddyserver/caddy/releases/latest/download/caddy_2.7.6_linux_amd64.deb" \
-    && dpkg -i caddy_*.deb \
-    && rm caddy_*.deb
+
+# ==============================================
+# OFFICIAL CADDY INSTALL (CLOUDSMITH)
+# ==============================================
+RUN curl -1sLf 'https://dl.cloudsmith.io/public/caddy/stable/gpg.key' \
+        | gpg --dearmor -o /usr/share/keyrings/caddy-stable-archive-keyring.gpg \
+    && curl -1sLf 'https://dl.cloudsmith.io/public/caddy/stable/debian.deb.txt' \
+        | tee /etc/apt/sources.list.d/caddy-stable.list \
+    && chmod o+r /usr/share/keyrings/caddy-stable-archive-keyring.gpg \
+    && chmod o+r /etc/apt/sources.list.d/caddy-stable.list \
+    && apt-get update \
+    && apt-get install -y caddy \
+    && rm -rf /var/lib/apt/lists/*
+# ==============================================
+
 
 # Install uv
 RUN curl -LsSf https://astral.sh/uv/install.sh | sh
@@ -41,6 +52,7 @@ RUN uv sync
 RUN npm install @hexlet/project-devops-deploy-crud-frontend
 
 
+
 ###############################################
 # STAGE 2 — Runtime
 ###############################################
@@ -48,6 +60,7 @@ FROM python:3.12-slim AS runtime
 
 WORKDIR /app
 
+# Runtime deps
 RUN apt-get update \
     && apt-get install -y --no-install-recommends \
         curl \
@@ -61,15 +74,16 @@ COPY --from=builder /app/.venv /app/.venv
 ENV VIRTUAL_ENV=/app/.venv
 ENV PATH="/app/.venv/bin:$PATH"
 
-# Copy Caddy binary
+# Copy Caddy binary from builder
 COPY --from=builder /usr/bin/caddy /usr/bin/caddy
 
-# Copy frontend node_modules
+# Copy frontend dependencies
 COPY --from=builder /app/node_modules /app/node_modules
 
-# Copy project files
+# Copy app source
 COPY . /app/
 
+# Place Caddyfile and entrypoint
 RUN mkdir -p /etc/caddy \
     && cp Caddyfile /etc/caddy/Caddyfile \
     && chmod +x scripts/entrypoint.sh
