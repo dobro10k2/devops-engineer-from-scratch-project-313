@@ -1,35 +1,38 @@
 {
     admin off
-    auto_https off
 }
 
 :80
 
-encode gzip
-
-# Health checks
+# Статические health/ping проверки
 handle /health {
     respond 200
 }
+
 handle /ping {
     respond "pong" 200
 }
 
-# API
-handle_path /api/* {
+# Бэкенд API
+handle /api/* {
     reverse_proxy 127.0.0.1:8080 {
+        # Полезные заголовки для бэкенда
         header_up X-Real-IP {remote}
+        header_up X-Forwarded-For {remote}
+        header_up X-Forwarded-Proto {scheme}
     }
 }
 
-# Short links
-handle_path /r/* {
+# Короткие ссылки
+handle /r/* {
     reverse_proxy 127.0.0.1:8080
 }
 
-# SPA
+# Фронтенд (SPA)
 handle {
     reverse_proxy 127.0.0.1:5173 {
+        # Для SPA приложения
+        header_up Host {host}
         header_up X-Real-IP {remote}
     }
 }
