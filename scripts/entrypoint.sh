@@ -14,8 +14,8 @@ done
 echo "FastAPI is UP"
 
 echo "Starting frontend (Vite)..."
-API_URL=/api \
-npx start-hexlet-devops-deploy-crud-frontend --host 0.0.0.0 &
+VITE_API_URL=/api \
+  npx start-hexlet-devops-deploy-crud-frontend --host 0.0.0.0 &
 
 # Wait for frontend
 until curl -s http://127.0.0.1:5173 >/dev/null; do
