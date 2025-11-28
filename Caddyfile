@@ -1,38 +1,59 @@
 :80
 
+# =========================================
 # FRONTEND (Vite dev server)
+# =========================================
+
 @frontend {
-    not path /api/* 
-    not path /r/* 
-    not path /health 
+    not path /api/*
+    not path /r/*
+    not path /health
     not path /ping
 }
 handle @frontend {
-    reverse_proxy 127.0.0.1:5173
+    reverse_proxy 127.0.0.1:5173 {
+        # FIX for Vite: allow external host
+        header_up Host 127.0.0.1
+        header_up X-Real-IP {http.request.remote}
+        header_up X-Forwarded-For {http.request.remote}
+        header_up X-Forwarded-Proto {http.request.scheme}
+    }
 }
 
+# =========================================
 # API
+# =========================================
 handle_path /api/* {
     reverse_proxy 127.0.0.1:8080
 }
 
-# Redirects /r/<short>
+# =========================================
+# SHORT LINKS (dynamic)
+# =========================================
 handle_path /r/* {
     reverse_proxy 127.0.0.1:8080
 }
 
-# /ping
-handle_path /ping {
-    reverse_proxy 127.0.0.1:8080
+# =========================================
+# PING (one specific path)
+# =========================================
+handle /ping {
+    reverse_proxy 127.0.0.1:8080/ping
 }
 
-# /health
-handle_path /health {
-    reverse_proxy 127.0.0.1:8080
+# =========================================
+# HEALTH (one specific path)
+# =========================================
+handle /health {
+    reverse_proxy 127.0.0.1:8080/health
 }
 
-# Fallback
+# =========================================
+# FALLBACK (SPA front)
+# =========================================
 handle {
-    reverse_proxy 127.0.0.1:5173
+    reverse_proxy 127.0.0.1:5173 {
+        header_up Host 127.0.0.1
+    }
 }
 
