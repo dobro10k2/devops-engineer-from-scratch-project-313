@@ -2,6 +2,9 @@
 
 set -e
 
+echo "Edit frontend vite.config.ts config file..."
+sed -i '/preview: {/a\    allowedHosts: true,' node_modules/@hexlet/project-devops-deploy-crud-frontend/vite.config.ts &
+
 echo "Starting services..."
 
 # Запускаем бэкенд в фоне
