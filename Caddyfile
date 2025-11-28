@@ -4,6 +4,7 @@
 
 :80
 
+# FRONTEND
 @frontend {
     not path /api/*
     not path /r/*
@@ -16,22 +17,31 @@ handle @frontend {
     }
 }
 
+# API
 handle_path /api/* {
     reverse_proxy 127.0.0.1:8080
 }
 
+# SHORT LINKS
 handle_path /r/* {
     reverse_proxy 127.0.0.1:8080
 }
 
+# PING  (FIXED!)
 handle /ping {
-    reverse_proxy 127.0.0.1:8080/ping
+    reverse_proxy 127.0.0.1:8080 {
+        uri /ping
+    }
 }
 
+# HEALTH (FIXED!)
 handle /health {
-    reverse_proxy 127.0.0.1:8080/health
+    reverse_proxy 127.0.0.1:8080 {
+        uri /health
+    }
 }
 
+# FALLBACK SPA
 handle {
     reverse_proxy 127.0.0.1:5173 {
         header_up Host 127.0.0.1
