@@ -1,8 +1,0 @@
-fastapi
-uvicorn
-sqlmodel
-pytest
-httpx
-python-dotenv
-psycopg2-binary
-sentry-sdk[fastapi]
