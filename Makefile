@@ -1,13 +1,10 @@
 .PHONY: install dev run test lint fmt fix clean
 
-setup:
-	cd code && uv sync --python python3.12
-
 install:
 	uv sync
 
 run:
-	uv run --env-file .env fastapi dev --host 0.0.0.0 --port 8080
+	uv run fastapi dev --host 0.0.0.0 --port 8080
 
 dev:
 	npx concurrently \
