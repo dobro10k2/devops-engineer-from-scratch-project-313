@@ -25,10 +25,3 @@ fmt:
 
 clean:
 	rm -rf .ruff_cache uv.lock
-
-setup:
-	ifeq ($(CI),true)
-		pip install -r requirements.txt || true
-	else
-		uv sync
-	endif
