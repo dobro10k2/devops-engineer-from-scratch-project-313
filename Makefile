@@ -1,5 +1,8 @@
 .PHONY: install dev run test lint fmt fix clean
 
+setup:
+	cd code && uv sync --python python3.12
+
 install:
 	uv sync
 
