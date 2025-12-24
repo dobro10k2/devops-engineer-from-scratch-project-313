@@ -1,0 +1,10 @@
+version: "3.9"
+
+services:
+  app:
+    build: .
+    volumes:
+      - .:/app
+    environment:
+      CI: "true"
+      DATABASE_URL: sqlite:///./test.db

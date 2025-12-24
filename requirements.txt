@@ -5,4 +5,4 @@ pytest
 httpx
 python-dotenv
 psycopg2-binary
-sentry-sdk
+sentry-sdk[fastapi]
