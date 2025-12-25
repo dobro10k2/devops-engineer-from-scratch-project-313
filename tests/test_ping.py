@@ -7,6 +7,7 @@ from app.main import fastapi_app  # Use original FastAPI app for testing
 
 client = TestClient(fastapi_app)
 
+
 def test_ping():
     response = client.get("/ping")
     assert response.status_code == 200
