@@ -12,6 +12,7 @@ def test_ping():
     assert response.status_code == 200
     assert response.json() == "pong"
 
+
 def test_sentry_debug():
     # Ensure triggering Sentry route raises error
     import pytest

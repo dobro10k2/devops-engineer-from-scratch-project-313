@@ -64,7 +64,9 @@ def list_links(
 
     limit = end - start + 1
     links, total = get_links_paginated(session, offset=start, limit=limit)
-    response.headers["Content-Range"] = f"links {start}-{start+len(links)-1}/{total}"
+    response.headers["Content-Range"] = (
+    f"links {start}-{start + len(links) - 1}/{total}"
+    )
     return links
 
 
