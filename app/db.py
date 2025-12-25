@@ -1,18 +1,43 @@
-# app/db.py
 import os
+from sqlalchemy import create_engine
+from sqlalchemy.orm import sessionmaker
 
-from sqlmodel import Session, SQLModel, create_engine
+DATABASE_URL = os.getenv("DATABASE_URL")
 
-DATABASE_URL = os.getenv("DATABASE_URL").replace("postgres:", "postgresql:")
+if not DATABASE_URL:
+    raise RuntimeError("DATABASE_URL is not set")
 
-# PostgreSQL engine using psycopg2-binary
-engine = create_engine(DATABASE_URL, echo=True)
+# Render compatibility fix
+if DATABASE_URL.startswith("postgres://"):
+    DATABASE_URL = DATABASE_URL.replace(
+        "postgres://",
+        "postgresql+psycopg2://",
+        1,
+    )
 
-def init_db():
-    """Create database tables"""
-    SQLModel.metadata.create_all(engine)
+engine = create_engine(
+    DATABASE_URL,
+    echo=True,
+    pool_pre_ping=True,
+)
+
+SessionLocal = sessionmaker(
+    autocommit=False,
+    autoflush=False,
+    bind=engine,
+)
+
 
 def get_session():
-    """Provide a session for CRUD operations"""
-    with Session(engine) as session:
-        yield session
+    db = SessionLocal()
+    try:
+        yield db
+    finally:
+        db.close()
+
+
+def init_db():
+    from .models import SQLModel
+
+    SQLModel.metadata.create_all(bind=engine)
+
