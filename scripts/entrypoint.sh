@@ -1,12 +1,6 @@
 #!/bin/sh
 set -e
 
-#echo "=== Patching frontend bundle ==="
-#
-#find /app/node_modules/@hexlet/project-devops-deploy-crud-frontend/dist \
-#  -type f -name "*.js" \
-#  -exec sed -i 's|http://localhost:8080/api|https://dobro10k2.onrender.com/api|g' {} +
-
 cat > /app/node_modules/@hexlet/project-devops-deploy-crud-frontend/vite.config.js << 'EOF'
 import react from "@vitejs/plugin-react-swc";
 import { defineConfig } from "vite";
